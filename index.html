@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modo Troll – Torneio Clash Royale</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: #2a2a40;
+    --accent: #ff3c00;
+    --accent2: #ff8800;
+    --gold: #ffd700;
+    --silver: #c0c0c0;
+    --bronze: #cd7f32;
+    --text: #e8e8f0;
+    --muted: #6a6a8a;
+    --green: #00e676;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: .35;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 32px;
+    background: rgba(10,10,15,.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.7rem;
+    letter-spacing: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: .95rem;
+    letter-spacing: 1px;
+    transition: color .2s;
+    text-transform: uppercase;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    text-align: center;
+    padding: 80px 24px 60px;
+    overflow: hidden;
+  }
+
+  .hero-glow {
+    position: absolute;
+    top: -120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 700px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(255,60,0,.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: .75rem;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 4px 14px;
+    letter-spacing: 3px;
+    margin-bottom: 18px;
+    animation: fadeUp .5s ease both;
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 10vw, 7rem);
+    line-height: 1;
+    letter-spacing: 4px;
+    animation: fadeUp .6s .1s ease both;
+  }
+
+  .hero h1 span {
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--muted);
+    margin-top: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    animation: fadeUp .6s .2s ease both;
+  }
+
+  .hero-cta {
+    display: inline-block;
+    margin-top: 32px;
+    padding: 14px 40px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    color: #fff;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 3px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    transition: filter .2s, transform .15s;
+    animation: fadeUp .6s .3s ease both;
+  }
+  .hero-cta:hover { filter: brightness(1.15); transform: translateY(-2px); }
+
+  /* ── SECTION WRAPPER ── */
+  section { position: relative; z-index: 1; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    letter-spacing: 3px;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .section-title span { color: var(--accent); }
+
+  .section-sub {
+    text-align: center;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 48px;
+    font-size: .95rem;
+    letter-spacing: 1px;
+  }
+
+  /* ── HOW IT WORKS ── */
+  #como-funciona { padding: 80px 0; }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 2px;
+  }
+
+  .step {
+    background: var(--surface);
+    padding: 32px 24px;
+    border: 1px solid var(--border);
+    position: relative;
+    transition: border-color .2s;
+  }
+  .step:hover { border-color: var(--accent); }
+
+  .step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 12px;
+    transition: color .2s;
+  }
+  .step:hover .step-num { color: var(--accent); }
+
+  .step h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .step p { color: var(--muted); font-size: .9rem; line-height: 1.5; }
+
+  /* ── TOURNAMENTS ── */
+  #torneios { padding: 80px 0; background: var(--surface); }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+  }
+
+  .card {
+    border: 1px solid var(--border);
+    background: var(--bg);
+    padding: 36px 32px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .2s, border-color .2s;
+    cursor: pointer;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transition: transform .3s;
+  }
+  .card:hover::before { transform: scaleX(1); }
+  .card:hover { transform: translateY(-4px); border-color: var(--accent); }
+
+  .card-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: .7rem;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+
+  .card-fee {
+    font-size: 2.6rem;
+    font-family: 'Bebas Neue', sans-serif;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 20px 0 8px;
+  }
+
+  .fee-label {
+    font-size: .8rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .prizes { border-top: 1px solid var(--border); padding-top: 20px; }
+
+  .prize-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+  }
+
+  .prize-medal {
+    font-size: 1.4rem;
+    width: 32px;
+    text-align: center;
+  }
+
+  .prize-pos {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: .8rem;
+    color: var(--muted);
+    flex: 1;
+  }
+
+  .prize-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+  }
+
+  .prize-val.gold { color: var(--gold); }
+  .prize-val.silver { color: var(--silver); }
+  .prize-val.bronze { color: var(--bronze); }
+
+  .card-btn {
+    display: block;
+    width: 100%;
+    margin-top: 28px;
+    padding: 14px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    color: #fff;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 3px;
+    border: none;
+    cursor: pointer;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    transition: filter .2s;
+  }
+  .card-btn:hover { filter: brightness(1.15); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.85);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    backdrop-filter: blur(6px);
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 40px 36px;
+    position: relative;
+    animation: modalIn .25s ease;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(.96) translateY(12px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 16px; right: 20px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+    transition: color .2s;
+  }
+  .modal-close:hover { color: var(--text); }
+
+  .modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.9rem;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+
+  .modal-fee-line {
+    font-size: .85rem;
+    color: var(--muted);
+    margin-bottom: 28px;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .form-group { margin-bottom: 18px; }
+
+  .form-group label {
+    display: block;
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 7px;
+  }
+
+  .form-group input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 12px 14px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .form-group input:focus { border-color: var(--accent); }
+  .form-group input::placeholder { color: var(--muted); }
+
+  .pix-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 20px;
+    margin: 24px 0;
+    text-align: center;
+  }
+
+  .pix-label {
+    font-size: .75rem;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .pix-key {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.1rem;
+    color: var(--accent2);
+    word-break: break-all;
+    margin-bottom: 12px;
+  }
+
+  .pix-amount {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .copy-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 8px 18px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: .75rem;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all .2s;
+    letter-spacing: 1px;
+  }
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    color: #fff;
+    border: none;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    transition: filter .2s;
+    margin-top: 8px;
+  }
+  .submit-btn:hover { filter: brightness(1.15); }
+  .submit-btn:disabled { opacity: .5; cursor: not-allowed; filter: none; }
+
+  .form-note {
+    font-size: .8rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── SUCCESS SCREEN ── */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .success-icon {
+    font-size: 4rem;
+    margin-bottom: 16px;
+    animation: pop .4s ease;
+  }
+
+  @keyframes pop {
+    0% { transform: scale(0); }
+    70% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+
+  .success-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    color: var(--green);
+  }
+
+  .success-info {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 20px;
+    margin: 20px 0;
+    text-align: left;
+  }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: .95rem;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-key { color: var(--muted); font-size: .8rem; letter-spacing: 1px; text-transform: uppercase; }
+  .info-val { font-family: 'Share Tech Mono', monospace; color: var(--accent2); font-weight: 700; }
+
+  /* ── ADMIN PANEL ── */
+  #admin { padding: 80px 0; }
+
+  .admin-login {
+    max-width: 420px;
+    margin: 0 auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 40px 36px;
+  }
+
+  .admin-panel {
+    display: none;
+  }
+
+  .search-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .search-bar input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 14px 18px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .search-bar input:focus { border-color: var(--accent); }
+
+  .search-bar button {
+    padding: 14px 24px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: filter .2s;
+  }
+  .search-bar button:hover { filter: brightness(1.15); }
+
+  .participants-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .9rem;
+  }
+
+  .participants-table th {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    text-align: left;
+    font-size: .75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .participants-table td {
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    font-weight: 600;
+  }
+
+  .participants-table tr:hover td { background: var(--surface); }
+
+  .status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    font-size: .7rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .status-paid { background: rgba(0,230,118,.1); color: var(--green); border: 1px solid rgba(0,230,118,.3); }
+  .status-pending { background: rgba(255,136,0,.1); color: var(--accent2); border: 1px solid rgba(255,136,0,.3); }
+  .status-winner { background: rgba(255,215,0,.1); color: var(--gold); border: 1px solid rgba(255,215,0,.3); }
+
+  .pix-btn {
+    padding: 6px 14px;
+    background: none;
+    border: 1px solid var(--green);
+    color: var(--green);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: .75rem;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .pix-btn:hover { background: var(--green); color: var(--bg); }
+
+  .admin-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+
+  .stat-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+  }
+
+  .stat-label {
+    font-size: .75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .tab-bar {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+
+  .tab {
+    padding: 12px 24px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all .2s;
+  }
+  .tab.active { color: var(--accent); border-color: var(--accent); }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 24px;
+    text-align: center;
+    color: var(--muted);
+    font-size: .85rem;
+    letter-spacing: 1px;
+  }
+
+  /* ── ANIMS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  .sala-info-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 18px;
+    margin-top: 20px;
+    border-left: 3px solid var(--accent);
+  }
+
+  .sala-title {
+    font-size: .75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: 'Share Tech Mono', monospace;
+    margin-bottom: 12px;
+  }
+
+  .no-results {
+    text-align: center;
+    padding: 48px;
+    color: var(--muted);
+    font-size: .9rem;
+    letter-spacing: 1px;
+  }
+
+  .tag-torneio {
+    display: inline-block;
+    font-size: .7rem;
+    padding: 2px 8px;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 1px;
+  }
+  .tag-basic { background: rgba(255,60,0,.1); color: var(--accent); border: 1px solid rgba(255,60,0,.3); }
+  .tag-pro { background: rgba(255,215,0,.1); color: var(--gold); border: 1px solid rgba(255,215,0,.3); }
+
+  @media (max-width: 600px) {
+    nav { padding: 12px 16px; }
+    .nav-links { display: none; }
+    .modal { padding: 28px 20px; }
+    .admin-login { padding: 28px 20px; }
+    .participants-table { font-size: .8rem; }
+    .participants-table th, .participants-table td { padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">MODO_TROLL</div>
+  <div class="nav-links">
+    <a href="#como-funciona">Como Funciona</a>
+    <a href="#torneios">Torneios</a>
+    <a href="#admin">Painel Admin</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-tag">⚔ CLASH ROYALE · TORNEIO OFICIAL</div>
+  <h1>GANHE <span>DINHEIRO</span><br>JOGANDO</h1>
+  <p class="hero-sub">Pague a taxa · Jogue · Receba via PIX</p>
+  <a href="#torneios" class="hero-cta">VER TORNEIOS</a>
+</section>
+
+<div class="divider"></div>
+
+<!-- COMO FUNCIONA -->
+<section id="como-funciona">
+  <div class="container">
+    <div class="section-title">COMO <span>FUNCIONA</span></div>
+    <div class="section-sub">SIMPLES. RÁPIDO. SEM ENROLAÇÃO.</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Escolha o Torneio</h3>
+        <p>Selecione entre o torneio Basic ou Pro conforme seu estilo.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Preencha seus Dados</h3>
+        <p>Informe seu nick no jogo e número de WhatsApp.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Pague via PIX</h3>
+        <p>Taxa única. Pagamento rápido e seguro via PIX.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h3>Receba a Senha</h3>
+        <p>Após confirmação, você recebe os dados da sala no site.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">05</div>
+        <h3>Jogue e Vença</h3>
+        <p>Entre na sala e mostre seu skill contra outros competidores.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">06</div>
+        <h3>Receba o Prêmio</h3>
+        <p>Os melhores colocados recebem o prêmio na hora via PIX.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TORNEIOS -->
+<section id="torneios">
+  <div class="container">
+    <div class="section-title">ESCOLHA SEU <span>TORNEIO</span></div>
+    <div class="section-sub">DOIS NÍVEIS DE COMPETIÇÃO</div>
+    <div class="cards">
+
+      <!-- BASIC -->
+      <div class="card" onclick="openModal('basic')">
+        <div class="card-badge">🎮 TORNEIO BASIC</div>
+        <div class="card-title">BASIC</div>
+        <p style="color:var(--muted);font-size:.9rem;">Para quem quer entrar na disputa com baixo custo.</p>
+        <div class="card-fee">R$ 4,99</div>
+        <div class="fee-label">TAXA DE PARTICIPAÇÃO</div>
+        <div class="prizes">
+          <div class="prize-row">
+            <div class="prize-medal">🥇</div>
+            <div class="prize-pos">1º LUGAR</div>
+            <div class="prize-val gold">R$ 50,00</div>
+          </div>
+          <div class="prize-row">
+            <div class="prize-medal">🥈</div>
+            <div class="prize-pos">2º LUGAR</div>
+            <div class="prize-val silver">R$ 25,00</div>
+          </div>
+          <div class="prize-row">
+            <div class="prize-medal">🥉</div>
+            <div class="prize-pos">3º LUGAR</div>
+            <div class="prize-val bronze">R$ 10,00</div>
+          </div>
+        </div>
+        <button class="card-btn">PARTICIPAR AGORA</button>
+      </div>
+
+      <!-- PRO -->
+      <div class="card" onclick="openModal('pro')">
+        <div class="card-badge" style="color:var(--gold);border-color:var(--gold)">👑 TORNEIO PRO</div>
+        <div class="card-title">PRO</div>
+        <p style="color:var(--muted);font-size:.9rem;">Para quem confia no próprio skill e quer prêmios maiores.</p>
+        <div class="card-fee">R$ 10,00</div>
+        <div class="fee-label">TAXA DE PARTICIPAÇÃO</div>
+        <div class="prizes">
+          <div class="prize-row">
+            <div class="prize-medal">🥇</div>
+            <div class="prize-pos">1º LUGAR</div>
+            <div class="prize-val gold">R$ 100,00</div>
+          </div>
+          <div class="prize-row">
+            <div class="prize-medal">🥈</div>
+            <div class="prize-pos">2º LUGAR</div>
+            <div class="prize-val silver">R$ 50,00</div>
+          </div>
+          <div class="prize-row">
+            <div class="prize-medal">🥉</div>
+            <div class="prize-pos">3º LUGAR</div>
+            <div class="prize-val bronze">R$ 30,00</div>
+          </div>
+        </div>
+        <button class="card-btn" style="background:linear-gradient(90deg,#b8860b,var(--gold))">PARTICIPAR AGORA</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ADMIN -->
+<section id="admin">
+  <div class="container">
+    <div class="section-title">PAINEL <span>ADMIN</span></div>
+    <div class="section-sub">ACESSO RESTRITO – MODO_TROLL</div>
+
+    <!-- LOGIN -->
+    <div class="admin-login" id="adminLogin">
+      <div class="form-group">
+        <label>Senha do Painel</label>
+        <input type="password" id="adminPass" placeholder="Digite a senha..." onkeydown="if(event.key==='Enter') adminLogin()">
+      </div>
+      <button class="submit-btn" onclick="adminLogin()">ENTRAR</button>
+      <p class="form-note" id="loginError" style="color:var(--accent);display:none;">Senha incorreta.</p>
+    </div>
+
+    <!-- PANEL -->
+    <div class="admin-panel" id="adminPanel">
+
+      <!-- STATS -->
+      <div class="admin-stats" id="adminStats"></div>
+
+      <!-- TABS -->
+      <div class="tab-bar">
+        <div class="tab active" onclick="switchTab('all')">TODOS</div>
+        <div class="tab" onclick="switchTab('basic')">BASIC</div>
+        <div class="tab" onclick="switchTab('pro')">PRO</div>
+      </div>
+
+      <!-- SEARCH -->
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Buscar por nick ou telefone..." oninput="renderTable()">
+        <button onclick="renderTable()">BUSCAR</button>
+      </div>
+
+      <!-- TABLE -->
+      <div style="overflow-x:auto;">
+        <table class="participants-table" id="participantsTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nick</th>
+              <th>Telefone</th>
+              <th>Torneio</th>
+              <th>Taxa</th>
+              <th>Status</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+      <div id="noResults" class="no-results" style="display:none;">Nenhum participante encontrado.</div>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="logo" style="font-size:1.3rem;margin-bottom:8px;">MODO_TROLL</div>
+  <p>Torneio Clash Royale · Pagamento via PIX · Premiação garantida</p>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+
+    <!-- FORM SCREEN -->
+    <div id="formScreen">
+      <div class="modal-title" id="modalTitle">TORNEIO BASIC</div>
+      <div class="modal-fee-line" id="modalFee">TAXA: R$ 4,99</div>
+
+      <div class="form-group">
+        <label>Nick no Clash Royale</label>
+        <input type="text" id="nickInput" placeholder="Ex: KingDestroyer#123">
+      </div>
+      <div class="form-group">
+        <label>WhatsApp (com DDD)</label>
+        <input type="tel" id="phoneInput" placeholder="Ex: 27999999999">
+      </div>
+
+      <div class="pix-box">
+        <div class="pix-label">CHAVE PIX (TELEFONE)</div>
+        <div class="pix-key" id="pixKey">11999999999</div>
+        <div class="pix-amount" id="pixAmount">R$ 4,99</div>
+        <button class="copy-btn" onclick="copyPix()">📋 COPIAR CHAVE</button>
+      </div>
+
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:16px;line-height:1.5;">
+        Após realizar o pagamento clique em <strong style="color:var(--text)">Confirmar Inscrição</strong>. Sua vaga será validada e os dados da sala serão exibidos.
+      </p>
+
+      <button class="submit-btn" onclick="submitForm()">CONFIRMAR INSCRIÇÃO</button>
+      <p class="form-note">Ao confirmar, você declara que realizou o pagamento via PIX.</p>
+    </div>
+
+    <!-- SUCCESS SCREEN -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">🏆</div>
+      <div class="success-title">INSCRIÇÃO CONFIRMADA!</div>
+      <p style="color:var(--muted);font-size:.9rem;margin-bottom:4px;">Guarde os dados abaixo para entrar na sala:</p>
+
+      <div class="success-info" id="successInfo"></div>
+
+      <div class="sala-info-box">
+        <div class="sala-title">ℹ️ INFORMAÇÕES DA SALA</div>
+        <p style="font-size:.85rem;color:var(--muted);line-height:1.6;" id="salaExtra"></p>
+      </div>
+
+      <button class="submit-btn" style="margin-top:24px;" onclick="closeModal()">FECHAR</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ──────────────────────────────────────────────
+//  CONFIG – edite aqui
+// ──────────────────────────────────────────────
+const CONFIG = {
+  pixKey: '27999999999',          // Sua chave PIX
+  adminPassword: 'mt2025',        // Senha do painel admin
+  salaName: 'MODO_TROLL',         // Nome da sala no jogo
+  salaExtra: 'Entre na sala pelo menu Batalha Social > Torneios Amigos. Use o nome e senha acima. Dúvidas? Fale pelo WhatsApp informado no cadastro.',
+};
+
+// Gera senha do dia: DDMM + mt  ex: 2803mt
+function getSenhaDodia() {
+  const now = new Date();
+  const d = String(now.getDate()).padStart(2,'0');
+  const m = String(now.getMonth()+1).padStart(2,'0');
+  return `${d}${m}mt`;
+}
+
+const TOURNAMENTS = {
+  basic: { label: 'BASIC', fee: 'R$ 4,99', feeNum: 4.99 },
+  pro:   { label: 'PRO',   fee: 'R$ 10,00', feeNum: 10.00 },
+};
+
+// ──────────────────────────────────────────────
+//  LOCAL STORAGE – participantes
+// ──────────────────────────────────────────────
+function getParticipants() {
+  return JSON.parse(localStorage.getItem('mt_participants') || '[]');
+}
+function saveParticipants(arr) {
+  localStorage.setItem('mt_participants', JSON.stringify(arr));
+}
+
+// ──────────────────────────────────────────────
+//  MODAL
+// ──────────────────────────────────────────────
+let currentTournament = 'basic';
+
+function openModal(type) {
+  currentTournament = type;
+  const t = TOURNAMENTS[type];
+  document.getElementById('modalTitle').textContent = `TORNEIO ${t.label}`;
+  document.getElementById('modalFee').textContent = `TAXA: ${t.fee}`;
+  document.getElementById('pixKey').textContent = CONFIG.pixKey;
+  document.getElementById('pixAmount').textContent = t.fee;
+  document.getElementById('nickInput').value = '';
+  document.getElementById('phoneInput').value = '';
+  document.getElementById('formScreen').style.display = 'block';
+  document.getElementById('successScreen').style.display = 'none';
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+function copyPix() {
+  navigator.clipboard.writeText(CONFIG.pixKey).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✅ COPIADO!';
+    setTimeout(() => btn.textContent = '📋 COPIAR CHAVE', 2000);
+  });
+}
+
+// ──────────────────────────────────────────────
+//  FORM SUBMIT
+// ──────────────────────────────────────────────
+function submitForm() {
+  const nick  = document.getElementById('nickInput').value.trim();
+  const phone = document.getElementById('phoneInput').value.trim();
+
+  if (!nick || !phone) {
+    alert('Preencha seu Nick e WhatsApp para continuar.');
+    return;
+  }
+  if (phone.replace(/\D/g,'').length < 10) {
+    alert('Número de WhatsApp inválido.');
+    return;
+  }
+
+  const senha = getSenhaDodia();
+  const t = TOURNAMENTS[currentTournament];
+
+  const entry = {
+    id: Date.now(),
+    nick,
+    phone: phone.replace(/\D/g,''),
+    tournament: currentTournament,
+    fee: t.feeNum,
+    status: 'paid',
+    senha,
+    createdAt: new Date().toLocaleString('pt-BR'),
+  };
+
+  const list = getParticipants();
+  list.push(entry);
+  saveParticipants(list);
+
+  // Success screen
+  document.getElementById('formScreen').style.display = 'none';
+  document.getElementById('successScreen').style.display = 'block';
+
+  document.getElementById('successInfo').innerHTML = `
+    <div class="info-row"><span class="info-key">Nick</span><span class="info-val">${nick}</span></div>
+    <div class="info-row"><span class="info-key">Torneio</span><span class="info-val">${t.label}</span></div>
+    <div class="info-row"><span class="info-key">Sala</span><span class="info-val">${CONFIG.salaName}</span></div>
+    <div class="info-row"><span class="info-key">Senha</span><span class="info-val">${senha}</span></div>
+    <div class="info-row"><span class="info-key">Data</span><span class="info-val">${entry.createdAt}</span></div>
+  `;
+
+  document.getElementById('salaExtra').textContent = CONFIG.salaExtra;
+}
+
+// ──────────────────────────────────────────────
+//  ADMIN LOGIN
+// ──────────────────────────────────────────────
+let adminActive = false;
+let currentTab = 'all';
+
+function adminLogin() {
+  const pass = document.getElementById('adminPass').value;
+  if (pass === CONFIG.adminPassword) {
+    document.getElementById('adminLogin').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    adminActive = true;
+    renderStats();
+    renderTable();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach((el, i) => {
+    el.classList.toggle('active', ['all','basic','pro'][i] === tab);
+  });
+  renderTable();
+}
+
+function renderStats() {
+  const list = getParticipants();
+  const total = list.length;
+  const basic = list.filter(p => p.tournament === 'basic').length;
+  const pro   = list.filter(p => p.tournament === 'pro').length;
+  const arrecadado = list.reduce((s, p) => s + p.fee, 0);
+
+  document.getElementById('adminStats').innerHTML = `
+    <div class="stat-box"><div class="stat-label">Total Inscritos</div><div class="stat-value">${total}</div></div>
+    <div class="stat-box"><div class="stat-label">Basic</div><div class="stat-value">${basic}</div></div>
+    <div class="stat-box"><div class="stat-label">Pro</div><div class="stat-value">${pro}</div></div>
+    <div class="stat-box"><div class="stat-label">Arrecadado</div><div class="stat-value">R$${arrecadado.toFixed(2)}</div></div>
+  `;
+}
+
+function renderTable() {
+  if (!adminActive) return;
+
+  const query = document.getElementById('searchInput').value.toLowerCase();
+  let list = getParticipants();
+
+  if (currentTab !== 'all') list = list.filter(p => p.tournament === currentTab);
+  if (query) list = list.filter(p =>
+    p.nick.toLowerCase().includes(query) ||
+    p.phone.includes(query)
+  );
+
+  const body = document.getElementById('tableBody');
+  const noRes = document.getElementById('noResults');
+
+  if (list.length === 0) {
+    body.innerHTML = '';
+    noRes.style.display = 'block';
+    return;
+  }
+  noRes.style.display = 'none';
+
+  body.innerHTML = list.map((p, i) => `
+    <tr>
+      <td style="color:var(--muted);font-family:'Share Tech Mono',monospace">${i+1}</td>
+      <td><strong>${p.nick}</strong></td>
+      <td><a href="https://wa.me/55${p.phone}" target="_blank" style="color:var(--accent2);text-decoration:none;">📱 ${formatPhone(p.phone)}</a></td>
+      <td><span class="tag-torneio ${p.tournament === 'pro' ? 'tag-pro' : 'tag-basic'}">${p.tournament.toUpperCase()}</span></td>
+      <td style="font-family:'Share Tech Mono',monospace">R$${p.fee.toFixed(2)}</td>
+      <td><span class="status-badge status-${p.status}">${statusLabel(p.status)}</span></td>
+      <td>
+        <button class="pix-btn" onclick="markWinner(${p.id})">🏆 VENCEDOR</button>
+      </td>
+    </tr>
+  `).join('');
+
+  renderStats();
+}
+
+function formatPhone(p) {
+  if (p.length === 11) return `(${p.slice(0,2)}) ${p.slice(2,7)}-${p.slice(7)}`;
+  if (p.length === 10) return `(${p.slice(0,2)}) ${p.slice(2,6)}-${p.slice(6)}`;
+  return p;
+}
+
+function statusLabel(s) {
+  return { paid: 'PAGO', pending: 'PENDENTE', winner: 'VENCEDOR' }[s] || s;
+}
+
+function markWinner(id) {
+  const list = getParticipants();
+  const p = list.find(x => x.id === id);
+  if (!p) return;
+  p.status = 'winner';
+  saveParticipants(list);
+  alert(`✅ ${p.nick} marcado como vencedor!\nWhatsApp: ${formatPhone(p.phone)}\nEntre em contato e envie o PIX!`);
+  renderTable();
+}
+
+// Keyboard shortcut: ESC fecha modal
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+</script>
+</body>
+</html>
